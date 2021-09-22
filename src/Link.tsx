@@ -9,9 +9,7 @@ export const Link: React.FC<Props<unknown>> = ({language, to, onClick, ...rest})
   const context = useContext(I18nextContext);
   const urlLanguage = language || context.language;
   const getLanguagePath = (language: string) => {
-    return context.generateDefaultLanguagePage || language !== context.defaultLanguage
-      ? `/${language}`
-      : '';
+    return `/${language}`;
   };
   const link = `${getLanguagePath(urlLanguage)}${to}`;
   const localClick = useCallback(

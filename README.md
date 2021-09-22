@@ -182,7 +182,8 @@ const Header = ({siteTitle}) => {
           style={{
             color: `white`,
             textDecoration: `none`
-          }}>
+          }}
+        >
           {siteTitle}
         </Link>
       </h1>
@@ -194,7 +195,8 @@ const Header = ({siteTitle}) => {
               onClick={(e) => {
                 e.preventDefault();
                 changeLanguage(lng);
-              }}>
+              }}
+            >
               {lng}
             </a>
           </li>
@@ -222,7 +224,8 @@ const Header = ({siteTitle}) => {
           style={{
             color: `white`,
             textDecoration: `none`
-          }}>
+          }}
+        >
           {siteTitle}
         </Link>
       </h1>
