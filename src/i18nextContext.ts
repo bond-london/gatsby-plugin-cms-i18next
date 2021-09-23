@@ -1,14 +1,16 @@
 import React from 'react';
 import {I18NextContext} from './types';
 
-const defaultLanguages = ['en'];
+const defaultLanguage = 'en';
 
 export const I18nextContext = React.createContext<I18NextContext>({
-  language: defaultLanguages[0],
-  languages: defaultLanguages,
-  routed: false,
-  defaultLanguage: defaultLanguages[0],
+  language: defaultLanguage,
+  languages: [defaultLanguage],
+  // routed: false,
+  defaultLanguage,
   // generateDefaultLanguagePage: false,
   // originalPath: '/',
-  path: '/'
+  path: '/',
+  hasTranslations: false,
+  siteUrl: 'http://localhost:8000'
 });

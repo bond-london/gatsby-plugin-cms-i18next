@@ -1,35 +1,28 @@
 import {InitOptions} from 'i18next';
 import {NodeInput} from 'gatsby';
 
-export const LANGUAGE_KEY = 'gatsby-i18next-language';
-
-export type PageOptions = {
-  matchPath: string;
-  getLanguageFromPath?: boolean;
-  excludeLanguages?: string[];
-  languages?: string[];
-};
+export const LANGUAGE_KEY = 'gatsby-i18next-cms-language';
 
 export type PluginOptions = {
-  languages: string[];
+  languages?: string[];
   defaultLanguage: string;
   // generateDefaultLanguagePage: boolean;
   // redirect: boolean;
-  siteUrl?: string;
-  i18nextOptions: InitOptions;
-  pages: Array<PageOptions>;
+  siteUrl: string;
+  i18nextOptions?: InitOptions;
   localeJsonSourceName?: string;
 };
 
 export type I18NextContext = {
+  hasTranslations: boolean;
   language: string;
-  routed: boolean;
+  // routed: boolean;
   languages: string[];
   defaultLanguage: string;
   // generateDefaultLanguagePage: boolean;
   // originalPath: string;
   path: string;
-  siteUrl?: string;
+  siteUrl: string;
 };
 
 export type PageContext = {

@@ -1,9 +1,17 @@
 import React, {useCallback, useContext} from 'react';
 import {I18nextContext} from './i18nextContext';
-import {Link as GatsbyLink, GatsbyLinkProps} from 'gatsby';
+import {Link as GatsbyLink, GatsbyLinkProps, withPrefix} from 'gatsby';
 import {LANGUAGE_KEY} from './types';
 
 type Props<TState> = GatsbyLinkProps<TState> & {language?: string};
+
+export function removePathPrefix(pathname: string): string {
+  const pathPrefix = withPrefix('/');
+  if (pathname.startsWith(pathPrefix)) {
+    return pathname.replace(pathPrefix, '/');
+  }
+  return pathname;
+}
 
 export const Link: React.FC<Props<unknown>> = ({language, to, onClick, ...rest}) => {
   const context = useContext(I18nextContext);

@@ -1,19 +1,17 @@
 import {CreatePageArgs, Page} from 'gatsby';
 import {match} from 'path-to-regexp';
-import {PageContext, PageOptions, PluginOptions} from '../types';
+import {PageContext, PluginOptions} from '../types';
 
 type GeneratePageParams = {
   language: string;
-  path?: string;
-  originalPath?: string;
-  routed?: boolean;
-  pageOptions?: PageOptions;
+  path: string;
+  hasTranslations: boolean;
 };
 
 function generatePage(
   page: Page<PageContext>,
-  {language, routed = false, pageOptions}: GeneratePageParams,
-  {languages, defaultLanguage}: PluginOptions
+  {language, path, hasTranslations}: GeneratePageParams,
+  {languages, defaultLanguage, siteUrl}: PluginOptions
 ): Page<PageContext> {
   return {
     ...page,
@@ -23,9 +21,10 @@ function generatePage(
       i18n: {
         language,
         defaultLanguage,
-        languages: pageOptions?.languages || languages,
-        routed,
-        path: page.path
+        languages: languages || [defaultLanguage],
+        hasTranslations,
+        path,
+        siteUrl
       }
     }
   };
@@ -39,21 +38,22 @@ export function onCreatePage(
     return;
   }
 
-  const {pages = [], languages = []} = pluginOptions;
+  const {languages = [], defaultLanguage} = pluginOptions;
 
   const {createPage, deletePage} = actions;
 
-  const pageOptions = pages.find((opt) => match(opt.matchPath)(page.path));
-  const pageLanguage = match<{lang: string}>(pageOptions?.matchPath || '/:lang/(.*)')(page.path);
-  if (!pageLanguage) {
-    return;
-  }
-  const language = languages.find((lang) => lang === pageLanguage.params.lang);
-  if (!language) {
-    return;
-  }
+  const path = page.path;
+  const pageLanguage = match<{lang: string}>('/:lang/(.*)')(path);
+  const language = pageLanguage
+    ? languages.find((lang) => lang === pageLanguage.params.lang)
+    : undefined;
+  const generateParams: GeneratePageParams = {
+    language: language || defaultLanguage,
+    path,
+    hasTranslations: !!language
+  };
 
-  const newPage = generatePage(page, {language, routed: true, pageOptions}, pluginOptions);
+  const newPage = generatePage(page, generateParams, pluginOptions);
 
   try {
     deletePage(page);

@@ -28,8 +28,7 @@ export function useI18next<N extends Namespace = DefaultNamespace>(
 } {
   const {i18n, t, ready} = useTranslation(ns, options);
   const context = useContext(I18nextContext);
-
-  const {routed} = context;
+  const {hasTranslations} = context;
 
   const getLanguagePath = (language: string) => {
     return `/${language}`;
@@ -44,7 +43,7 @@ export function useI18next<N extends Namespace = DefaultNamespace>(
   };
 
   const removeLocalePart = (pathname: string) => {
-    if (!routed) return pathname;
+    if (!hasTranslations) return pathname;
     const i = pathname.indexOf(`/`, 1);
     return pathname.substring(i);
   };
@@ -52,7 +51,7 @@ export function useI18next<N extends Namespace = DefaultNamespace>(
   // eslint-disable-next-line @typescript-eslint/ban-types
   const navigate = (to: string, options?: NavigateOptions<{}>) => {
     const languagePath = getLanguagePath(context.language);
-    const link = routed ? `${languagePath}${to}` : `${to}`;
+    const link = `${languagePath}${to}`;
     return gatsbyNavigate(link, options);
   };
 

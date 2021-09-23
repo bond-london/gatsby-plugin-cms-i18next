@@ -6,14 +6,14 @@ import {I18nextProvider} from 'react-i18next';
 import {I18nextContext} from '../i18nextContext';
 import outdent from 'outdent';
 
-// eslint-disable-next-line react/display-name
-const withI18next = (i18n: I18n, context: I18NextContext) => (children: ReactNode) => {
-  return (
+function withI18next(i18n: I18n, context: I18NextContext) {
+  // eslint-disable-next-line react/display-name
+  return (children: ReactNode) => (
     <I18nextProvider i18n={i18n}>
       <I18nextContext.Provider value={context}>{children}</I18nextContext.Provider>
     </I18nextProvider>
   );
-};
+}
 
 interface LocalesInformation {
   _locales: {
@@ -23,30 +23,18 @@ interface LocalesInformation {
 
 export const wrapPageElement = (
   {element, props}: WrapPageElementBrowserArgs<LocalesInformation, PageContext>,
-  {
-    i18nextOptions = {},
-    siteUrl,
-    defaultLanguage: pluginDefaultLanguage,
-    languages: pluginLanguages
-  }: PluginOptions
+  {i18nextOptions = {}}: PluginOptions
 ): JSX.Element | null | undefined => {
-  console.log('wrap page element', element, props);
   if (!props) return;
   const {data, pageContext} = props;
-  const simplePage = !pageContext.i18n;
-  const inputI18n: I18NextContext = simplePage
-    ? {
-        routed: false,
-        language: pluginDefaultLanguage,
-        defaultLanguage: pluginDefaultLanguage,
-        languages: pluginLanguages,
-        path: props.location.pathname
-      }
-    : pageContext.i18n;
-  const {routed, language, languages, path, defaultLanguage} = inputI18n;
+  const inputI18n = pageContext.i18n;
+  if (!inputI18n) {
+    throw new Error('Page has no i18n');
+  }
+  const {hasTranslations, language, languages, path, defaultLanguage, siteUrl} = inputI18n;
 
   const i18n = i18next.createInstance();
-  if (!simplePage) {
+  if (hasTranslations) {
     const localeNodes = data?._locales?.edges || [];
 
     if (
@@ -97,9 +85,9 @@ export const wrapPageElement = (
         }
       })
       .then(() => {
-        console.log('initialised i18n');
+        // Do nothing
       })
-      .catch((error) => console.error(`failed to initialise i18n`, error));
+      .catch((error) => console.warn(`failed to initialise i18n`, error));
 
     localeNodes.forEach(({node}) => {
       const parsedData = JSON.parse(node.data) as unknown;
@@ -111,7 +99,7 @@ export const wrapPageElement = (
         .changeLanguage(language)
         .then(() => console.log(`Changed ${i18n.language} to ${language}`))
         .catch((error) =>
-          console.log(`Failed to change language from ${i18n.language} to ${language}`, error)
+          console.warn(`Failed to change language from ${i18n.language} to ${language}`, error)
         );
     }
   } else {
@@ -127,11 +115,11 @@ export const wrapPageElement = (
       .then(() => {
         console.log('initialised i18n');
       })
-      .catch((error) => console.error(`failed to initialise i18n`, error));
+      .catch((error) => console.warn(`failed to initialise i18n`, error));
   }
 
-  const context = {
-    routed,
+  const context: I18NextContext = {
+    hasTranslations,
     language,
     languages,
     siteUrl,

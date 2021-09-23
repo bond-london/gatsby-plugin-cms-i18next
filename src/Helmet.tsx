@@ -8,7 +8,9 @@ function createUrlWithLang(
   currentLanguage: string,
   otherLanguage: string
 ) {
-  const newPath = path.replace(`/${currentLanguage}`, `/${otherLanguage}`);
+  const newPath = path.startsWith(`/${currentLanguage}`)
+    ? path.replace(`/${currentLanguage}`, `/${otherLanguage}`)
+    : `/${otherLanguage}${path}`;
   const url = `${siteUrl}${newPath}`;
   if (url.endsWith('/')) {
     return url;
