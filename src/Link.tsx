@@ -3,7 +3,9 @@ import {I18nextContext} from './i18nextContext';
 import {Link as GatsbyLink, GatsbyLinkProps, withPrefix} from 'gatsby';
 import {LANGUAGE_KEY} from './types';
 
-type Props<TState> = GatsbyLinkProps<TState> & {language?: string};
+type Props<TState> = Omit<GatsbyLinkProps<TState>, 'ref'> & {
+  language?: string;
+};
 
 export function removePathPrefix(pathname: string): string {
   const pathPrefix = withPrefix('/');

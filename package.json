@@ -40,7 +40,9 @@
   "scripts": {
     "build:ts": "babel src --out-dir dist --extensions .ts,.tsx",
     "build:defs": "tsc --declaration --outDir dist --emitDeclarationOnly",
-    "dev": "babel -w src --out-dir dist --extensions .ts,.tsx",
+    "dev:ts": "babel -w src --out-dir dist --extensions .ts,.tsx",
+    "dev:defs": "tsc -w --declaration --outDir dist --emitDeclarationOnly",
+    "dev": "run-p dev:ts dev:defs",
     "prepare": "cross-env NODE_ENV=production yarn run build:ts && yarn run build:defs && husky install",
     "format": "prettier --write \"**/*.{js,jsx,json,ts,tsx,md}\"",
     "release": "release-it"
@@ -60,6 +62,7 @@
     "gatsby": "^3.0.0",
     "husky": "^7.0.0",
     "i18next": "^21.0.1",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
     "pretty-quick": "^3.1.0",
     "react": "^17.0.1",
