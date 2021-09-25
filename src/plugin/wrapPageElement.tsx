@@ -97,7 +97,7 @@ export const wrapPageElement = (
     if (i18n.language !== language) {
       i18n
         .changeLanguage(language)
-        .then(() => console.log(`Changed ${i18n.language} to ${language}`))
+        .then()
         .catch((error) =>
           console.warn(`Failed to change language from ${i18n.language} to ${language}`, error)
         );
