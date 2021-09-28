@@ -113,7 +113,7 @@ export const wrapPageElement = (
         }
       })
       .then(() => {
-        console.log('initialised i18n');
+        //console.log('initialised i18n');
       })
       .catch((error) => console.warn(`failed to initialise i18n`, error));
   }
