@@ -6,8 +6,6 @@ export const LANGUAGE_KEY = 'gatsby-i18next-cms-language';
 export type PluginOptions = {
   languages?: string[];
   defaultLanguage: string;
-  // generateDefaultLanguagePage: boolean;
-  // redirect: boolean;
   siteUrl: string;
   i18nextOptions?: InitOptions;
   localeJsonSourceName?: string;
@@ -16,11 +14,8 @@ export type PluginOptions = {
 export type I18NextContext = {
   hasTranslations: boolean;
   language: string;
-  // routed: boolean;
   languages: string[];
   defaultLanguage: string;
-  // generateDefaultLanguagePage: boolean;
-  // originalPath: string;
   path: string;
   siteUrl: string;
 };
@@ -30,6 +25,14 @@ export type PageContext = {
   language: string;
   i18n: I18NextContext;
 };
+
+export interface I18SitePage {
+  path: string;
+}
+
+export interface I18PagesContext {
+  sitePages: readonly I18SitePage[];
+}
 
 // Taken from https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-source-filesystem/index.d.ts
 // No way to refer it without directly depending on gatsby-source-filesystem.
