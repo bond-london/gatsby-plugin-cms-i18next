@@ -5,7 +5,7 @@ import {removePathPrefix, useI18next} from '.';
 import {LANGUAGE_KEY} from './types';
 
 interface GatsbyWindow {
-  __replace: (to: string) => void;
+  ___replace: (to: string) => void;
 }
 export const LanguageDetect: React.FC = () => {
   const {defaultLanguage, languages, hasTranslations} = useI18next();
@@ -24,7 +24,7 @@ export const LanguageDetect: React.FC = () => {
     const queryParams = search || '';
     const newUrl = withPrefix(`/${desired}${removePathPrefix(pathname)}${queryParams}${hash}`);
     const gatsbyWindow = window as unknown as GatsbyWindow;
-    gatsbyWindow.__replace(newUrl);
+    gatsbyWindow.___replace(newUrl);
     return null;
   }
   return <h1>Language should switch on the browser</h1>;
