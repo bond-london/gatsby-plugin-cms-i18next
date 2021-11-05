@@ -45,7 +45,8 @@
     "dev": "run-p dev:ts dev:defs",
     "prepare": "cross-env NODE_ENV=production yarn run build:ts && yarn run build:defs && husky install",
     "format": "prettier --write \"**/*.{js,jsx,json,ts,tsx,md}\"",
-    "release": "release-it"
+    "release": "release-it",
+    "test": ""
   },
   "devDependencies": {
     "@babel/cli": "^7.12.10",
