@@ -8,12 +8,15 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "sourceMap": true,
     "isolatedModules": true,
-    "jsx": "react"
+    "jsx": "react",
+    "importHelpers": true,
+    "removeComments": false,
+    "declaration": true
   },
   "include": ["src"]
 }
