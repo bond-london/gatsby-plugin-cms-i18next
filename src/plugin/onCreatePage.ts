@@ -1,6 +1,6 @@
-import {CreatePageArgs, Page} from 'gatsby';
-import {match} from 'path-to-regexp';
-import {PageContext, PluginOptions} from '../types';
+import { CreatePageArgs, Page } from "gatsby";
+import { match } from "path-to-regexp";
+import { PageContext, PluginOptions } from "../types";
 
 type GeneratePageParams = {
   language: string;
@@ -10,8 +10,8 @@ type GeneratePageParams = {
 
 function generatePage(
   page: Page<PageContext>,
-  {language, path, hasTranslations}: GeneratePageParams,
-  {languages, defaultLanguage, siteUrl}: PluginOptions
+  { language, path, hasTranslations }: GeneratePageParams,
+  { languages, defaultLanguage, siteUrl }: PluginOptions
 ): Page<PageContext> {
   return {
     ...page,
@@ -24,33 +24,33 @@ function generatePage(
         languages: languages || [defaultLanguage],
         hasTranslations,
         path,
-        siteUrl
-      }
-    }
+        siteUrl,
+      },
+    },
   };
 }
 export function onCreatePage(
-  {page, actions}: CreatePageArgs<PageContext>,
+  { page, actions }: CreatePageArgs<PageContext>,
   pluginOptions: PluginOptions
 ): void {
   //Exit if the page has already been processed.
-  if (typeof page.context.i18n === 'object') {
+  if (typeof page.context.i18n === "object") {
     return;
   }
 
-  const {languages = [], defaultLanguage} = pluginOptions;
+  const { languages = [], defaultLanguage } = pluginOptions;
 
-  const {createPage, deletePage} = actions;
+  const { createPage, deletePage } = actions;
 
   const path = page.path;
-  const pageLanguage = match<{lang: string}>('/:lang/(.*)')(path);
+  const pageLanguage = match<{ lang: string }>("/:lang/(.*)")(path);
   const language = pageLanguage
     ? languages.find((lang) => lang === pageLanguage.params.lang)
     : undefined;
   const generateParams: GeneratePageParams = {
     language: language || defaultLanguage,
     path,
-    hasTranslations: !!language
+    hasTranslations: !!language,
   };
 
   const newPage = generatePage(page, generateParams, pluginOptions);
@@ -58,7 +58,7 @@ export function onCreatePage(
   try {
     deletePage(page);
   } catch (error) {
-    console.error('Failed to delete page', error);
+    console.error("Failed to delete page", error);
   }
   createPage(newPage);
 }

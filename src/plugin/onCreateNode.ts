@@ -1,7 +1,7 @@
-import {CreateNodeArgs, Node} from 'gatsby';
-import {FileSystemNode, PluginOptions, LocaleNodeInput} from '../types';
+import { CreateNodeArgs, Node } from "gatsby";
+import { FileSystemNode, PluginOptions, LocaleNodeInput } from "../types";
 
-export function unstable_shouldOnCreateNode({node}: {node: Node}): boolean {
+export function unstable_shouldOnCreateNode({ node }: { node: Node }): boolean {
   // We only care about JSON content.
   return node.internal.mediaType === `application/json`;
 }
@@ -13,25 +13,25 @@ export const onCreateNode = async (
     loadNodeContent,
     createNodeId,
     createContentDigest,
-    reporter
+    reporter,
   }: CreateNodeArgs<FileSystemNode>,
-  {localeJsonSourceName}: PluginOptions
+  { localeJsonSourceName }: PluginOptions
 ): Promise<void> => {
-  if (!unstable_shouldOnCreateNode({node})) {
+  if (!unstable_shouldOnCreateNode({ node })) {
     return;
   }
 
   const {
     absolutePath,
-    internal: {type},
+    internal: { type },
     sourceInstanceName,
     relativeDirectory,
     name,
-    id
+    id,
   } = node;
 
   // Currently only support file resources
-  if (type !== 'File') {
+  if (type !== "File") {
     return;
   }
 
@@ -56,13 +56,15 @@ export const onCreateNode = async (
   // verify & canonicalize indent. (do not care about key order)
   let data: string;
   try {
-    data = JSON.stringify(JSON.parse(content), undefined, '');
+    data = JSON.stringify(JSON.parse(content), undefined, "");
   } catch {
-    const hint = node.absolutePath ? `file ${node.absolutePath}` : `in node ${node.id}`;
+    const hint = node.absolutePath
+      ? `file ${node.absolutePath}`
+      : `in node ${node.id}`;
     throw new Error(`Unable to parse JSON: ${hint}`);
   }
 
-  const {createNode, createParentChildLink} = actions;
+  const { createNode, createParentChildLink } = actions;
 
   const localeNode: LocaleNodeInput = {
     id: createNodeId(`${id} >>> Locale`),
@@ -71,17 +73,17 @@ export const onCreateNode = async (
     internal: {
       content: data,
       contentDigest: createContentDigest(data),
-      type: `Locale`
+      type: `Locale`,
     },
     language: language,
     ns: name,
     data,
-    fileAbsolutePath: absolutePath
+    fileAbsolutePath: absolutePath,
   };
 
   createNode(localeNode);
 
-  createParentChildLink({parent: node, child: localeNode});
+  createParentChildLink({ parent: node, child: localeNode });
 
   activity.end();
 };

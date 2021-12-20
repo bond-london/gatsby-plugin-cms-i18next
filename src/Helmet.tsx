@@ -1,6 +1,6 @@
-import React from 'react';
-import {Helmet as ReactHelmet, HelmetProps} from 'react-helmet';
-import {useI18next} from './useI18next';
+import React from "react";
+import { Helmet as ReactHelmet, HelmetProps } from "react-helmet";
+import { useI18next } from "./useI18next";
 
 function createUrlWithLang(
   siteUrl: string,
@@ -12,17 +12,26 @@ function createUrlWithLang(
     ? path.replace(`/${currentLanguage}`, `/${otherLanguage}`)
     : `/${otherLanguage}${path}`;
   const url = `${siteUrl}${newPath}`;
-  if (url.endsWith('/')) {
+  if (url.endsWith("/")) {
     return url;
   }
   return `${url}/`;
 }
-export const Helmet: React.FC<HelmetProps> = ({children, ...props}) => {
-  const {languages, language, path, siteUrl = '', defaultLanguage} = useI18next();
+export const Helmet: React.FC<HelmetProps> = ({ children, ...props }) => {
+  const {
+    languages,
+    language,
+    path,
+    siteUrl = "",
+    defaultLanguage,
+  } = useI18next();
   return (
     <ReactHelmet {...props}>
       <html lang={language} />
-      <link rel="canonical" href={createUrlWithLang(siteUrl, path, language, language)} />
+      <link
+        rel="canonical"
+        href={createUrlWithLang(siteUrl, path, language, language)}
+      />
       {languages.map((lng) => (
         <link
           rel="alternate"

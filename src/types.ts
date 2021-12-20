@@ -1,7 +1,7 @@
-import {InitOptions} from 'i18next';
-import {NodeInput} from 'gatsby';
+import { InitOptions } from "i18next";
+import { NodeInput } from "gatsby";
 
-export const LANGUAGE_KEY = 'gatsby-i18next-cms-language';
+export const LANGUAGE_KEY = "gatsby-i18next-cms-language";
 
 export type PluginOptions = {
   languages?: string[];
@@ -86,7 +86,7 @@ export interface LocaleNodeInput extends NodeInput {
 export interface LocaleNode extends LocaleNodeInput {
   parent: string;
   children: string[];
-  internal: NodeInput['internal'] & {
+  internal: NodeInput["internal"] & {
     owner: string;
   };
 }
