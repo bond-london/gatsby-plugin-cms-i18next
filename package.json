@@ -40,7 +40,8 @@
   "scripts": {
     "build": "tsc --outDir dist",
     "dev": "tsc -w --outDir dist",
-    "prepare": "cross-env NODE_ENV=production yarn run lint && yarn run build && husky install",
+    "clean": "rimraf dist",
+    "prepare": "cross-env NODE_ENV=production yarn run lint && yarn run clean && yarn run build && husky install",
     "format": "prettier --write \"**/*.{js,jsx,json,ts,tsx,md}\"",
     "lint": "eslint --max-warnings 0 \"**/*.{js,jsx,ts,tsx}\"",
     "release": "release-it",
@@ -75,7 +76,8 @@
     "browser-lang": "^0.1.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "outdent": "^0.8.0",
-    "path-to-regexp": "^6.2.0"
+    "path-to-regexp": "^6.2.0",
+    "rimraf": "^3.0.2"
   },
   "peerDependencies": {
     "gatsby": "^3.x || ^4.x",
