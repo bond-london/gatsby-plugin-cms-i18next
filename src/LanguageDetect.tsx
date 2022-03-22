@@ -1,7 +1,6 @@
 import { withPrefix } from "gatsby-link";
 import React from "react";
 import { removePathPrefix, useI18next } from ".";
-import { LANGUAGE_KEY } from "./types";
 import LanguageDetector from "i18next-browser-languagedetector";
 
 interface GatsbyWindow {
