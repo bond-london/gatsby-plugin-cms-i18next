@@ -1,22 +1,29 @@
 import { withPrefix } from "gatsby-link";
 import React from "react";
 import { removePathPrefix, useI18next } from ".";
-import LanguageDetector from "i18next-browser-languagedetector";
 
 interface GatsbyWindow {
   ___replace: (to: string) => void;
 }
 
-export function redirectToLanguagePage(language: string) {
+export function redirectToLanguagePage(
+  language: string,
+  fromLanguage?: string
+) {
   if (typeof window !== "undefined") {
     const { location } = window;
     const { search, pathname, hash } = location;
-    if (pathname.startsWith(`/${language}`)) return;
+    const unprefixedPathname = removePathPrefix(pathname);
+    if (unprefixedPathname.startsWith(`/${language}`)) return;
+
+    const noLanguagePathname =
+      fromLanguage && unprefixedPathname.startsWith(`/${fromLanguage}`)
+        ? unprefixedPathname.substring(fromLanguage.length + 1)
+        : unprefixedPathname;
+    const newLanguagePathname = `/${language}${noLanguagePathname}`;
 
     const queryParams = search || "";
-    const newUrl = withPrefix(
-      `/${language}${removePathPrefix(pathname)}${queryParams}${hash}`
-    );
+    const newUrl = withPrefix(`${newLanguagePathname}${queryParams}${hash}`);
     const gatsbyWindow = window as unknown as GatsbyWindow;
     gatsbyWindow.___replace(newUrl);
   }
@@ -28,26 +35,5 @@ export const LanguageDetect: React.FC = () => {
     throw new Error("Cannot detect language on a translated page");
   }
 
-  if (typeof window !== "undefined") {
-    const languageDetector = new LanguageDetector();
-    const language = languageDetector.detect();
-    console.log("language", language);
-
-    // const { location, localStorage } = window;
-    // const storedLanguage = localStorage.getItem(LANGUAGE_KEY);
-    // const detected =
-    //   storedLanguage || browserLang({ languages, fallback: defaultLanguage });
-    // const desired = languages.includes(detected) ? detected : defaultLanguage;
-    // localStorage.setItem(LANGUAGE_KEY, desired);
-
-    // const { search, pathname, hash } = location;
-    // const queryParams = search || "";
-    // const newUrl = withPrefix(
-    //   `/${desired}${removePathPrefix(pathname)}${queryParams}${hash}`
-    // );
-    // const gatsbyWindow = window as unknown as GatsbyWindow;
-    // gatsbyWindow.___replace(newUrl);
-    return null;
-  }
   return <h1>Language should switch on the browser</h1>;
 };

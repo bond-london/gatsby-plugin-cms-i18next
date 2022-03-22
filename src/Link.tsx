@@ -1,7 +1,7 @@
-import React, { useCallback, useContext } from "react";
+import React, { useContext } from "react";
 import { I18nextContext } from "./i18nextContext";
 import { Link as GatsbyLink, GatsbyLinkProps, withPrefix } from "gatsby";
-import { I18SitePage, LANGUAGE_KEY } from "./types";
+import { I18SitePage } from "./types";
 
 type Props<TState> = Omit<GatsbyLinkProps<TState>, "ref"> & {
   language?: string;
@@ -58,32 +58,12 @@ export const SmartLink: React.FC<Props<unknown>> = ({
 export const DumbLink: React.FC<Props<unknown>> = ({
   language,
   to,
-  onClick,
   ...rest
 }) => {
   const context = useContext(I18nextContext);
   const urlLanguage = language || context.language;
   const link = `${getLanguagePath(urlLanguage)}${to}`;
-  const localClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>) => {
-      if (language) {
-        localStorage.setItem(LANGUAGE_KEY, language);
-      }
-      if (onClick) {
-        onClick(e);
-      }
-    },
-    [language, onClick]
-  );
-
-  return (
-    <GatsbyLink
-      {...(rest as unknown)}
-      to={link}
-      hrefLang={urlLanguage}
-      onClick={localClick}
-    />
-  );
+  return <GatsbyLink {...(rest as unknown)} to={link} hrefLang={urlLanguage} />;
 };
 
 export const Link: React.FC<Props<unknown>> = (props) => {

@@ -1,8 +1,6 @@
 import { InitOptions } from "i18next";
 import { NodeInput } from "gatsby";
 
-export const LANGUAGE_KEY = "gatsby-i18next-cms-language";
-
 export type PluginOptions = {
   languages?: string[];
   defaultLanguage: string;

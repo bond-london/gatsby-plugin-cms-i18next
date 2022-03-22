@@ -70,9 +70,11 @@ export const wrapPageElement = (
     detection: {
       xorder: ["localStorage", "sessionStorage", "path", "navigator"],
       order: [
+        "sessionStorage",
         CustomPathLanguageDetector.name,
         BaseNavigatorLanguageDetector.name,
       ],
+      caches: ["sessionStorage"],
       lookupFromPathIndex: 0,
     },
   };
@@ -80,9 +82,7 @@ export const wrapPageElement = (
   const i18n = i18next.createInstance();
   i18n.on("languageChanged", (lng) => {
     console.log("changed language", lng, path, hasTranslations, inputI18n);
-    if (!hasTranslations) {
-      redirectToLanguagePage(lng);
-    }
+    redirectToLanguagePage(lng, inputI18n.language);
   });
   if (hasTranslations) {
     const localeNodes = data?._locales?.edges || [];
