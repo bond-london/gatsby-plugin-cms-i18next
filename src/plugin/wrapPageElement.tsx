@@ -40,6 +40,7 @@ export const wrapPageElement = (
   { i18nextOptions = {} }: PluginOptions
 ): JSX.Element | null | undefined => {
   if (!props) return;
+  console.log({ props });
   const { data, pageContext } = props;
   const inputI18n = pageContext.i18n;
   if (!inputI18n) {
@@ -82,11 +83,13 @@ export const wrapPageElement = (
   const i18n = i18next.createInstance();
   i18n.on("languageChanged", (lng) => {
     console.log("changed language", lng, path, hasTranslations, inputI18n);
-    redirectToLanguagePage(lng, inputI18n.language);
+    if (pageContext.availableLanguages?.includes(lng)) {
+      redirectToLanguagePage(lng, inputI18n.language);
+    }
   });
   if (hasTranslations) {
     const localeNodes = data?._locales?.edges || [];
-    console.log("has translations");
+    console.log("has translations", data);
 
     if (
       languages.length > 1 &&
@@ -143,7 +146,7 @@ export const wrapPageElement = (
         fallbackNS,
       })
       .then(() => {
-        console.log("initialised i18n with ns");
+        console.log("initialised i18n with ns", i18n);
       })
       .catch((error) =>
         console.warn(`failed to initialise i18n with ns`, error)
@@ -153,7 +156,7 @@ export const wrapPageElement = (
       .use(languageDetector)
       .init(options)
       .then(() => {
-        console.log("initialised i18n");
+        console.log("initialised i18n", i18n);
       })
       .catch((error) => console.warn(`failed to initialise i18n`, error));
   }

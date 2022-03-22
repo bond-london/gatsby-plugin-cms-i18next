@@ -22,6 +22,7 @@ export type PageContext = {
   path: string;
   language: string;
   i18n: I18NextContext;
+  availableLanguages?: string[];
 };
 
 export interface I18SitePage {
