@@ -6,10 +6,14 @@ import {
   PluginOptions,
   LocaleNode,
 } from "../types";
-import i18next, { i18n as I18n } from "i18next";
+import i18next, { i18n as I18n, Resource, ResourceKey } from "i18next";
 import { I18nextProvider } from "react-i18next";
 import { I18nextContext } from "../i18nextContext";
 import outdent from "outdent";
+import LanguageDetector from "i18next-browser-languagedetector";
+import BaseNavigatorLanguageDetector from "../BaseBrowserLanguageDetector";
+import { redirectToLanguagePage } from "..";
+import CustomPathLanguageDetector from "../CustomPathLanguageDetector";
 
 function withI18next(i18n: I18n, context: I18NextContext) {
   // eslint-disable-next-line react/display-name
@@ -50,9 +54,39 @@ export const wrapPageElement = (
     siteUrl,
   } = inputI18n;
 
+  const languageDetector = new LanguageDetector();
+  languageDetector.addDetector(BaseNavigatorLanguageDetector);
+  languageDetector.addDetector(CustomPathLanguageDetector);
+
+  const options = {
+    ...i18nextOptions,
+    debug: true,
+    fallbackLng: defaultLanguage,
+    supportedLngs: languages,
+    nonExplicitSupportedLngs: true,
+    react: {
+      useSuspense: false,
+    },
+    detection: {
+      xorder: ["localStorage", "sessionStorage", "path", "navigator"],
+      order: [
+        CustomPathLanguageDetector.name,
+        BaseNavigatorLanguageDetector.name,
+      ],
+      lookupFromPathIndex: 0,
+    },
+  };
+
   const i18n = i18next.createInstance();
+  i18n.on("languageChanged", (lng) => {
+    console.log("changed language", lng, path, hasTranslations, inputI18n);
+    if (!hasTranslations) {
+      redirectToLanguagePage(lng);
+    }
+  });
   if (hasTranslations) {
     const localeNodes = data?._locales?.edges || [];
+    console.log("has translations");
 
     if (
       languages.length > 1 &&
@@ -90,50 +124,36 @@ export const wrapPageElement = (
     defaultNS = namespaces.find((ns) => ns !== defaultNS) || defaultNS;
     const fallbackNS = namespaces.filter((ns) => ns !== defaultNS);
 
+    const resources = localeNodes.reduce<Resource>(
+      (res: Resource, { node }) => {
+        const parsedData = JSON.parse(node.data) as ResourceKey;
+        if (!(node.language in res)) res[node.language] = {};
+        res[node.language][node.ns] = parsedData;
+        return res;
+      },
+      {}
+    );
+
     i18n
+      .use(languageDetector)
       .init({
-        ...i18nextOptions,
-        lng: language,
-        fallbackLng: defaultLanguage,
+        ...options,
+        resources,
         defaultNS,
         fallbackNS,
-        react: {
-          useSuspense: false,
-        },
       })
       .then(() => {
-        // Do nothing
+        console.log("initialised i18n with ns");
       })
-      .catch((error) => console.warn(`failed to initialise i18n`, error));
-
-    localeNodes.forEach(({ node }) => {
-      const parsedData = JSON.parse(node.data) as unknown;
-      i18n.addResourceBundle(node.language, node.ns, parsedData);
-    });
-
-    if (i18n.language !== language) {
-      i18n
-        .changeLanguage(language)
-        .then()
-        .catch((error) =>
-          console.warn(
-            `Failed to change language from ${i18n.language} to ${language}`,
-            error
-          )
-        );
-    }
+      .catch((error) =>
+        console.warn(`failed to initialise i18n with ns`, error)
+      );
   } else {
     i18n
-      .init({
-        ...i18nextOptions,
-        lng: language,
-        fallbackLng: defaultLanguage,
-        react: {
-          useSuspense: false,
-        },
-      })
+      .use(languageDetector)
+      .init(options)
       .then(() => {
-        //console.log('initialised i18n');
+        console.log("initialised i18n");
       })
       .catch((error) => console.warn(`failed to initialise i18n`, error));
   }
