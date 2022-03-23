@@ -4,46 +4,41 @@ import { useI18next } from "./useI18next";
 
 function createUrlWithLang(
   siteUrl: string,
-  path: string,
-  currentLanguage: string,
+  corePath: string,
   otherLanguage: string
 ) {
-  const newPath = path.startsWith(`/${currentLanguage}`)
-    ? path.replace(`/${currentLanguage}`, `/${otherLanguage}`)
-    : `/${otherLanguage}${path}`;
+  const newPath = `/${otherLanguage}${corePath}`;
   const url = `${siteUrl}${newPath}`;
   if (url.endsWith("/")) {
     return url;
   }
   return `${url}/`;
 }
-export const Helmet: React.FC<HelmetProps> = ({ children, ...props }) => {
-  const {
-    languages,
-    language,
-    path,
-    siteUrl = "",
-    defaultLanguage,
-  } = useI18next();
+export const Helmet: React.FC<HelmetProps & { corePath: string }> = ({
+  children,
+  corePath,
+  ...props
+}) => {
+  const { languages, currentLanguage, defaultLanguage, siteUrl } = useI18next();
   return (
     <ReactHelmet {...props}>
-      <html lang={language} />
+      <html lang={currentLanguage} />
       <link
         rel="canonical"
-        href={createUrlWithLang(siteUrl, path, language, language)}
+        href={createUrlWithLang(siteUrl, corePath, currentLanguage)}
       />
       {languages.map((lng) => (
         <link
           rel="alternate"
           key={lng}
-          href={createUrlWithLang(siteUrl, path, language, lng)}
+          href={createUrlWithLang(siteUrl, corePath, lng)}
           hrefLang={lng}
         />
       ))}
       {/* adding a fallback page for unmatched languages */}
       <link
         rel="alternate"
-        href={createUrlWithLang(siteUrl, path, language, defaultLanguage)}
+        href={createUrlWithLang(siteUrl, corePath, defaultLanguage)}
         hrefLang="x-default"
       />
       {children}

@@ -1,59 +1,36 @@
 import { CreatePageArgs, Page } from "gatsby";
-import { match } from "path-to-regexp";
-import { PageContext, PluginOptions } from "../types";
-
-type GeneratePageParams = {
-  language: string;
-  path: string;
-  hasTranslations: boolean;
-};
+import { InputPageContext, PageContext, PluginOptions } from "../types";
 
 function generatePage(
-  page: Page<PageContext>,
-  { language, path, hasTranslations }: GeneratePageParams,
-  { languages, defaultLanguage, siteUrl }: PluginOptions
+  page: Page<InputPageContext>,
+  { languages, siteUrl }: PluginOptions
 ): Page<PageContext> {
   return {
     ...page,
     context: {
       ...page.context,
-      language,
       i18n: {
-        language,
-        defaultLanguage,
-        languages: languages || [defaultLanguage],
-        hasTranslations,
-        path,
+        currentLanguage: page.context.language,
+        defaultLanguage: page.context.defaultLanguage,
+        languages,
         siteUrl,
       },
     },
   };
 }
 export function onCreatePage(
-  { page, actions }: CreatePageArgs<PageContext>,
+  { page, actions, reporter }: CreatePageArgs<InputPageContext>,
   pluginOptions: PluginOptions
 ): void {
   //Exit if the page has already been processed.
-  if (typeof page.context.i18n === "object") {
+  if (typeof (page.context as unknown as PageContext).i18n === "object") {
+    reporter.panic(`On create page for ${page.path} has been called twice`);
     return;
   }
 
-  const { languages = [], defaultLanguage } = pluginOptions;
-
   const { createPage, deletePage } = actions;
 
-  const path = page.path;
-  const pageLanguage = match<{ lang: string }>("/:lang/(.*)")(path);
-  const language = pageLanguage
-    ? languages.find((lang) => lang === pageLanguage.params.lang)
-    : undefined;
-  const generateParams: GeneratePageParams = {
-    language: language || defaultLanguage,
-    path,
-    hasTranslations: !!language,
-  };
-
-  const newPage = generatePage(page, generateParams, pluginOptions);
+  const newPage = generatePage(page, pluginOptions);
 
   try {
     deletePage(page);

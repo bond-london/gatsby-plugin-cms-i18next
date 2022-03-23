@@ -1,12 +1,8 @@
 import React, { useContext } from "react";
 import { I18nextContext } from "./i18nextContext";
 import { Link as GatsbyLink, GatsbyLinkProps, withPrefix } from "gatsby";
-import { I18SitePage } from "./types";
 
-type Props<TState> = Omit<GatsbyLinkProps<TState>, "ref"> & {
-  language?: string;
-  sitePages?: readonly I18SitePage[];
-};
+type Props<TState> = Omit<GatsbyLinkProps<TState>, "ref">;
 
 export function removePathPrefix(pathname: string): string {
   const pathPrefix = withPrefix("/");
@@ -16,60 +12,9 @@ export function removePathPrefix(pathname: string): string {
   return pathname;
 }
 
-function getLanguagePath(language: string) {
-  return `/${language}`;
-}
-
-export const SmartLink: React.FC<Props<unknown>> = ({
-  language,
-  to,
-  sitePages,
-  ...rest
-}) => {
-  const context = useContext(I18nextContext);
-  const urlLanguage = language || context.language;
-  const link = `${getLanguagePath(urlLanguage)}${to}`;
-
-  const realPage = sitePages!.find((sp) => sp.path === link);
-  if (realPage) {
-    return (
-      <GatsbyLink {...(rest as unknown)} to={link} hrefLang={urlLanguage} />
-    );
-  }
-
-  const defaultLink = `${getLanguagePath(context.defaultLanguage)}${to}`;
-  const defaultPage = sitePages!.find((sp) => sp.path === defaultLink);
-  if (defaultPage) {
-    return (
-      <GatsbyLink
-        {...(rest as unknown)}
-        to={defaultLink}
-        hrefLang={context.defaultLanguage}
-      />
-    );
-  }
-
-  console.warn(
-    `No path for ${to} in ${urlLanguage} or ${context.defaultLanguage}`
-  );
-  return <GatsbyLink {...(rest as unknown)} to={link} hrefLang={urlLanguage} />;
-};
-
-export const DumbLink: React.FC<Props<unknown>> = ({
-  language,
-  to,
-  ...rest
-}) => {
-  const context = useContext(I18nextContext);
-  const urlLanguage = language || context.language;
-  const link = `${getLanguagePath(urlLanguage)}${to}`;
-  return <GatsbyLink {...(rest as unknown)} to={link} hrefLang={urlLanguage} />;
-};
-
 export const Link: React.FC<Props<unknown>> = (props) => {
-  if (props.sitePages) {
-    return <SmartLink {...props} />;
-  }
-
-  return <DumbLink {...props} />;
+  const { to, ...rest } = props;
+  const { currentLanguage } = useContext(I18nextContext);
+  const realPath = `/${currentLanguage}${to}`;
+  return <GatsbyLink {...rest} to={realPath} hrefLang={currentLanguage} />;
 };

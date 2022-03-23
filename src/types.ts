@@ -2,27 +2,29 @@ import { InitOptions } from "i18next";
 import { NodeInput } from "gatsby";
 
 export type PluginOptions = {
-  languages?: string[];
+  languages: string[];
   defaultLanguage: string;
   siteUrl: string;
-  i18nextOptions?: InitOptions;
-  localeJsonSourceName?: string;
+  i18nextOptions: InitOptions;
+  localeJsonSourceName: string;
 };
 
 export type I18NextContext = {
-  hasTranslations: boolean;
-  language: string;
-  languages: string[];
+  currentLanguage: string;
   defaultLanguage: string;
-  path: string;
+  languages: string[];
   siteUrl: string;
 };
 
-export type PageContext = {
-  path: string;
+export type InputPageContext = {
+  id: string;
   language: string;
+  corePath: string;
+  resourcesJson: string;
+  defaultLanguage: string;
+};
+export type PageContext = InputPageContext & {
   i18n: I18NextContext;
-  availableLanguages?: string[];
 };
 
 export interface I18SitePage {
