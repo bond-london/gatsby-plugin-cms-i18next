@@ -81,7 +81,7 @@ export const onCreateNode = async (
     fileAbsolutePath: absolutePath,
   };
 
-  createNode(localeNode);
+  await createNode(localeNode);
 
   createParentChildLink({ parent: node, child: localeNode });
 

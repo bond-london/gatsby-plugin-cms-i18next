@@ -3,15 +3,15 @@ import { InputPageContext, PageContext, PluginOptions } from "../types";
 
 function generatePage(
   page: Page<InputPageContext>,
-  { languages, siteUrl }: PluginOptions
+  { languages, siteUrl, defaultLanguage }: PluginOptions
 ): Page<PageContext> {
   return {
     ...page,
     context: {
-      ...page.context,
+      ...page.context!,
       i18n: {
-        currentLanguage: page.context.language,
-        defaultLanguage: page.context.defaultLanguage,
+        currentLanguage: page.context?.language || defaultLanguage,
+        defaultLanguage: page.context?.defaultLanguage || defaultLanguage,
         languages,
         siteUrl,
       },

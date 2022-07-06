@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { PropsWithChildren, useMemo } from "react";
 import { WrapPageElementBrowserArgs } from "gatsby";
 import {
   I18NextContext,
@@ -16,11 +16,13 @@ interface LocalesInformation {
   };
 }
 
-const PageElementWrapper: React.FC<{
-  i18nextOptions: InitOptions;
-  i18nextContext: I18NextContext;
-  pageContext: PageContext;
-}> = ({ i18nextOptions, i18nextContext, pageContext, children }) => {
+const PageElementWrapper: React.FC<
+  PropsWithChildren<{
+    i18nextOptions: InitOptions;
+    i18nextContext: I18NextContext;
+    pageContext: PageContext;
+  }>
+> = ({ i18nextOptions, i18nextContext, pageContext, children }) => {
   const { resourcesJson } = pageContext;
   const i18n = useMemo(() => {
     const options: InitOptions = {
