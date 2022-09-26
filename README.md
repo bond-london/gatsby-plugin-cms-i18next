@@ -1,3 +1,5 @@
+Merged with https://github.com/bond-london/bond-theme-development
+
 # gatsby-plugin-cms-i18next
 
 Use CMS provided translations for your Gatsby website
